@@ -1,4 +1,4 @@
-# elian_repo
+# py_network_config
 Elian Manzueta
 June 5, 2022
 
