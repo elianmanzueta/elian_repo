@@ -4,3 +4,9 @@ June 5, 2022
 
 
 I'm working on creating a network configuration tool written in Python with the modules Tkinter and Netmiko.  As of right now, I've implemented VLAN creation and port mode selection, in the future I aim to add more capabilities to the script like interface configuration and more. 
+
+## GUI 
+![](Blank.png)
+
+## GUI in Action
+![](Full.png)
