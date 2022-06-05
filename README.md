@@ -3,4 +3,4 @@ Elian Manzueta
 June 5, 2022
 
 
-This is a repository of all the random scripts I've wrote! I love networking and coding, so I'll be merging those two together. 
+I'm working on creating a network configuration tool written in Python with the modules Tkinter and Netmiko.  As of right now, I've implemented VLAN creation and port mode selection, in the future I aim to add more capabilities to the script like interface configuration and more. 
