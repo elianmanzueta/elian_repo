@@ -3,12 +3,6 @@ from netmiko import ConnectHandler
 import sys
 import re
 
-# Redirector writes terminal output into txt_progress 
-def redirector(inputStr):
-    txt_progress.insert(tk.INSERT, inputStr)
-
-sys.stdout.write = redirector 
-
 cisco = {
     'device_type':'cisco_ios',
     'host':'10.10.20.172',
@@ -22,6 +16,7 @@ port_modes = [
     'access'
 ]
 
+# Connect to device
 try:
     net_connect = ConnectHandler(**cisco)
 except:
@@ -47,14 +42,16 @@ def getVLAN():
     elif port_mode == 'trunk':
         print(f"Selected VLANs {vlan}")
         vlan = ', '.join(vlan.split(" "))
+
+# Get the port mode
 def getPortMode(selection):
     global port_mode
     port_mode = selection
     print(f"Selected port mode {port_mode}")
-# Executes command 
+    
+# Executes VLAN Assignment command 
 def assignVLAN():
-    # send_config_set in netmiko 
-    net_connect.enable() 
+    net_connect.enable() # Enable mode
     output = net_connect.send_config_set([f'interface {interface}', f'switchport mode {port_mode}', f'switchport access vlan {vlan}', 'exit'])
     print(output)
     complete = "Complete"
@@ -87,16 +84,22 @@ lbl_beginning = tk.Label(master=frm_vlan, text="Choose your VLAN(s)")
 lbl_beginning.grid(column=0, row=1) 
 ent_vlan = tk.Entry(master=frm_vlan, text="VLAN", width=30)
 ent_vlan.grid(column=1, row=1,  sticky='w')
-btn_submit = tk.Button(master=frm_vlan, text="Confirm", command=getVLAN) # Get VLAN
+btn_submit = tk.Button(master=frm_vlan, text="Confirm", command=getVLAN) # VLAN
 btn_submit.grid(column=1, row=1, sticky='e')
 
-# Execute commands 
+# Execute assignVLAN 
 btn_compile = tk.Button(text="Assign VLAN", command=assignVLAN) 
 btn_compile.pack() 
 
-# Progress
+# Text Box
 txt_progress = tk.Text()
 txt_progress.pack() 
+
+# Terminal output to txt_progress
+def redirector(inputStr):
+    txt_progress.insert(tk.INSERT, inputStr)
+
+sys.stdout.write = redirector 
 
 # Start
 window.mainloop() 
