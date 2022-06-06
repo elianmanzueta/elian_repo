@@ -10,3 +10,5 @@ I'm working on creating a network configuration tool written in Python with the 
 
 ## GUI in Action
 ![](Full.png)
+
+The GUI will tell you what you've inputted for your selections, and then output the Cisco IOS CLI configuration. 
