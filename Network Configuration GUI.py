@@ -1,3 +1,11 @@
+'''
+    File name: Network Configuration GUI.py
+    Author: Elian Manzueta
+    Date created: 06/05/2022
+    Date last modified: 06/05/2022
+    Python Version: 3.10.2
+'''
+
 import tkinter as tk
 from netmiko import ConnectHandler
 import sys
