@@ -9,7 +9,7 @@ I'm working on creating a network configuration tool written in Python with the 
 ![](Blank.png)
 
 ## GUI in Action
-![](Full.png)
+![](Full1.png)
 
 The GUI will tell you what you've inputted for your selections, and then output the Cisco IOS CLI configuration plus a verification by showing the interface show run. 
 
