@@ -2,7 +2,7 @@
     File name: Network Configuration GUI.py
     Author: Elian Manzueta
     Date created: 06/05/2022
-    Date last modified: 06/05/2022
+    Date last modified: 06/08/2022
     Python Version: 3.10.2
 '''
 
@@ -11,11 +11,12 @@ from netmiko import ConnectHandler
 import sys
 import re
 
+# Device settings
 cisco = {
     'device_type':'cisco_ios',
     'host':'10.10.20.172',
     'username':'elian',
-    'password':'cisco123',
+    'password':'cisco',
     'secret':'cisco'
 }
 
@@ -25,89 +26,140 @@ port_modes = [
 ]
 
 # Connect to device
-try:
-    net_connect = ConnectHandler(**cisco)
-except:
-    print("Cannot connect!")
-else:
-    pass 
+net_connect = ConnectHandler(**cisco)
 
+# Populates options menu depending on available interfaces. Uses a regular expression to detect FastEthernet and GigabitEthernet interfaces
 show_interfaces = net_connect.send_command("show ip int br")
 options = list(re.findall('Fast|Gigabit\w+/\w', show_interfaces)) # Grab interfaces
 
-# Grabs interface from interface_menu
-def getInterface(selection):
-    global interface
-    interface = selection 
-    print(f"Selected interface {interface}")
-
-# Grabs VLAN from ent_vlan 
-def getVLAN():
-    global vlan
-    vlan = (ent_vlan.get())
-    if port_mode == 'access':
-        print(f"Seleted VLAN {vlan}")
-    elif port_mode == 'trunk':
-        print(f"Selected VLANs {vlan}")
-        vlan = ', '.join(vlan.split(" "))
+# Get the interface
+def getInterface(*args):
+    selection = interface_selection.get() 
+    print(f"Selected interface {selection}")
+    return selection 
 
 # Get the port mode
-def getPortMode(selection):
-    global port_mode
-    port_mode = selection
-    print(f"Selected port mode {port_mode}")
-    
+def getPortMode(*args):
+    selection = port_selection.get() 
+    print(f"Selected port {selection}")
+    return selection
+
+# Get interface description 
+def getDescription(*args):
+    print(f"Description: \n {ent_desc.get()}")
+    return ent_desc.get() 
+
+# Get the IP
+def getIP(*args):
+    print(f"Selected IP: {ent_ip.get()}")
+    return ent_ip.get()
+
+# Get the subnet
+def getSubnet(*args):
+    print(f"Selected subnet: {ent_subnet.get()}")
+    return ent_subnet.get() 
+
+# Grabs the VLAN
+def getVLAN(*args):
+    vlan = (ent_vlan.get())
+    print(f"Selected VLAN {vlan}")
+    return vlan
+
 # Executes VLAN Assignment command 
-def assignVLAN():
+def assignValues(*args):
+    # For L2 interfaces. I'll add a separate L3 interface option at a later time
     net_connect.enable() # Enable mode
-    output = net_connect.send_config_set([f'interface {interface}', f'switchport mode {port_mode}', f'switchport access vlan {vlan}', 'exit'])
+    if getPortMode == 'access':
+        output = net_connect.send_config_set([f'interface {getInterface()} ', 
+                                              f'switchport mode {getPortMode()} ', 
+                                              f'switchport access vlan {getVLAN()} ', 
+                                              'exit'])
+    else:
+               output = net_connect.send_config_set([f'interface {getInterface()} ', 
+                                                     f'switchport trunk encapsulation dot1q', 
+                                                     f'switchport mode {getPortMode()} ', 
+                                                     f'switchport trunk allowed vlan add {getVLAN()} ', 
+                                                     'exit'])
     print(output)
-    complete = "Complete"
-    complete_txt = complete.center(80, "=")
-    print(complete_txt)
-    output = net_connect.send_command('show vlan') # Show changes
+    print(("Complete").center(20, '='))
+    output = net_connect.send_command(f'show run | sec interface {interface_selection.get()}') # Show changes
     print(output)
-
-
-# TKINTER
+        
+# Tkinter root
 window = tk.Tk()
-window.title("VLAN Assignment")
+window.title("Network Configuration")
 
-# Interface Selection
+# Interface Selection Frame
+frm_int = tk.Frame()
+frm_int.grid(column=0, row=0) 
+
+# Interface Menu
 interface_selection = tk.StringVar(window) 
-interface_selection.set("Select your desired interface") 
-trunk_selection = tk.StringVar(window)
-trunk_selection.set("Select your port mode")
-frm_interface = tk.Frame(master=window) 
-frm_interface.pack() 
-interface_menu = tk.OptionMenu(frm_interface, interface_selection, *options, command=getInterface) # Interface
-interface_menu.grid(column=0, row=0) 
-trunk_menu = tk.OptionMenu(frm_interface, trunk_selection, *port_modes, command=getPortMode) # Port mode
-trunk_menu.grid(column=1, row=0)
+interface_selection.set("Interface") 
+interface_menu = tk.OptionMenu(frm_int, interface_selection, *options, command=getInterface) # Interface options menu
+interface_menu.grid(row=0, column=0) 
 
-# VLAN Assignment 
-frm_vlan =tk.Frame(master=window, borderwidth=3)
-frm_vlan.pack() 
-lbl_beginning = tk.Label(master=frm_vlan, text="Choose your VLAN(s)")
-lbl_beginning.grid(column=0, row=1) 
-ent_vlan = tk.Entry(master=frm_vlan, text="VLAN", width=30)
-ent_vlan.grid(column=1, row=1,  sticky='w')
-btn_submit = tk.Button(master=frm_vlan, text="Confirm", command=getVLAN) # VLAN
-btn_submit.grid(column=1, row=1, sticky='e')
+# Trunk Menu
+port_selection = tk.StringVar(window)
+port_selection.set("Port Mode")
+port_menu = tk.OptionMenu(frm_int, port_selection, *port_modes, command=getPortMode) # Port mode
+port_menu.grid(row=0, column=1)
 
-# Execute assignVLAN 
-btn_compile = tk.Button(text="Assign VLAN", command=assignVLAN) 
-btn_compile.pack() 
+# VLAN and IP Address Entry Frame
+frm_entries = tk.Frame(borderwidth=10)
+frm_entries.grid(row=1, column=0)
+
+# IP and Subnet Labels and Entries
+lbl_ip = tk.Label(master=frm_entries, text="IP Address:") # IP
+ent_ip = tk.Entry(master=frm_entries, width=25)
+ent_ip.bind("<Return>", getIP) # Grab IP value on enter
+lbl_subnet = tk.Label(master=frm_entries, text="Subnet Mask:") # Subnet
+ent_subnet = tk.Entry(master=frm_entries, width=25)
+ent_subnet.bind('<Return>', getSubnet) # Grab subnet value on enter
+
+# VLAN Labels and Entries
+lbl_vlan = tk.Label(master=frm_entries, text="VLANs:") 
+ent_vlan = tk.Entry(master=frm_entries, width=25) # Grab VLAN
+ent_vlan.bind('<Return>', getVLAN) # Grab VLAN value on enter
+
+# Interface Description
+lbl_desc = tk.Label(master=frm_entries, text="Description:")
+ent_desc = tk.Entry(master=frm_entries, width=25)
+
+# IP and Subnet Grid
+lbl_ip.grid(row=1, column=0, sticky='w') # IP Label
+ent_ip.grid(row=1, column=1) # IP Entry
+lbl_subnet.grid(row=2, column=0) # Subnet Label
+ent_subnet.grid(row=2, column=1) # Subnet Entry
+
+# VLAN Grid
+lbl_vlan.grid(row=3, column=0, sticky='w') # VLAN Label
+ent_vlan.grid(row=3, column=1) # VLAN Entry
+
+# Interface Description Grid
+lbl_desc.grid(row=4, column=0, sticky='w')
+ent_desc.grid(row=4, column=1)
+
+# Buttons
+frm_button = tk.Frame(master=window)
+frm_button.grid()
+btn_compile = tk.Button(master=frm_button, text="Assign", command=assignValues) 
+
+# Button Grid 
+btn_compile.grid(row=5, column=0)
 
 # Text Box
 txt_progress = tk.Text()
-txt_progress.pack() 
+txt_progress.grid() 
 
-# Terminal output to txt_progress
+# Outputs terminal output to the text box
 def redirector(inputStr):
     txt_progress.insert(tk.INSERT, inputStr)
 
+print(("Welcome!").center(80, '='))
 sys.stdout.write = redirector 
 
-# Start
+# Run
 window.mainloop() 
+
+
