@@ -78,6 +78,7 @@ def assignValues(*args):
                output = net_connect.send_config_set([f'interface {getInterface()} ', 
                                                      f'switchport trunk encapsulation dot1q', 
                                                      f'switchport mode {getPortMode()} ', 
+                                                     f'switchport trunk allowed vlan none', 
                                                      f'switchport trunk allowed vlan add {getVLAN()} ', 
                                                      'exit'])
     print(output)
