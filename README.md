@@ -1,9 +1,9 @@
-# py_network_config
+# Cisco Switch Configuration Tool
 Elian Manzueta
 June 5, 2022
 
 
-I'm working on creating a network configuration tool written in Python with the modules Tkinter and Netmiko.  As of right now, I've implemented basic L2 switch configuration and will be working on allowing the user to switch between L2/L3 switch configuration in the future. 
+I'm working on creating a cisco switch configuration tool written in Python with the modules Tkinter and Netmiko.  As of right now, I've implemented basic L2 switch configuration and will be working on allowing the user to switch between L2/L3 switch configuration in the future. 
 
 ## GUI 
 ![](Blank.png)
