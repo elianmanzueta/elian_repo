@@ -1,6 +1,4 @@
 # Cisco Switch Configuration Tool
-Elian Manzueta
-June 5, 2022
 
 I created a Cisco switch configuration tool in Python using the modules Tkiner and Netmiko. This script supports both L2 and L3 switch configuration, allowing the user to specify their desired VLANs, port modes, and IP addresses. This script works with Layer 3 Cisco switches running Cisco IOS. For my testing environment, I used edge-sw01 in the Cisco Modeling Labs sandbox.
 
