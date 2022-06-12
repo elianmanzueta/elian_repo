@@ -67,7 +67,6 @@ def switchConfig(*args):
         port_menu.grid_forget() 
         frm_l3_entries.grid(row=1, column=0) 
 
-
 def assignValues(*args):
     # Checks if L2 or L3 switch configuration is selected.
     if radio_var.get() == 0:
@@ -94,7 +93,7 @@ def assignValues(*args):
                                               f'no switchport', 
                                               f'ip address {getIP()} {getSubnet()}'])
         print(output) 
-    print(("\nComplete").center(20, '='))
+    print(("Complete").center(20, '='))
     output = net_connect.send_command(f'show run | sec interface {getInterface()}') # Show changes
     print(output)
 
@@ -102,7 +101,6 @@ def assignValues(*args):
 window = tk.Tk()
 window.title("Switch Configuration Tool")
 window.resizable(False, False)
-
 
 # Interface Selection Frame
 frm_int = tk.Frame(master=window)

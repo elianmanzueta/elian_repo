@@ -2,17 +2,22 @@
 Elian Manzueta
 June 5, 2022
 
+I created a Cisco switch configuration tool in Python using the modules Tkiner and Netmiko. This script supports both L2 and L3 switch configuration, allowing the user to specify their desired VLANs, port modes, and IP addresses. This script works with Layer 3 Cisco switches running Cisco IOS. For my testing environment, I used edge-sw01 in the Cisco Modeling Labs sandbox.
 
-I'm working on creating a cisco switch configuration tool written in Python with the modules Tkinter and Netmiko.  As of right now, I've implemented basic L2 switch configuration and will be working on allowing the user to switch between L2/L3 switch configuration in the future. 
+## GUI
 
-## GUI 
-![](Blank.png)
+![](images/Layer%202%20Blank.png)
 
-## GUI in Action
-![](Full1.png)
+## Configuring a Layer 2 Access or Trunk Port
 
-The GUI will tell you what you've inputted for your selections, and then output the Cisco IOS CLI configuration plus a verification by showing the interface show run. 
+![](images/Access%20Port.png)
+![](images/Trunk%20Port.png)
 
+## Configuring a Layer 3 Port
+
+![](images/Layer%203%20Port.png)
+
+After configuration, the script will output the Cisco IOS CLI commands and a show run for verification.
 ### Sources
 
 https://realpython.com/python-gui-tkinter/
